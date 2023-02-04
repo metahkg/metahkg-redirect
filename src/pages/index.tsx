@@ -23,7 +23,6 @@ export default function Redirect() {
   useEffect(() => {
     if (data && !("error" in data) && data.safe) {
       const timerInterval = setInterval(() => {
-        console.log("timer");
         setTimer(timer - 1);
       }, 1000);
       return () => clearInterval(timerInterval);
@@ -84,7 +83,12 @@ export default function Redirect() {
                 <div>
                   <Text>
                     Visit{" "}
-                    <Link href={data.urlhaus_threats[0].urlhaus_link}>
+                    <Link
+                      href={data.urlhaus_threats[0].urlhaus_link}
+                      target="_blank"
+                      rel="noreferrer"
+                      isExternal
+                    >
                       urlhaus
                     </Link>{" "}
                     for more information on this threat.
