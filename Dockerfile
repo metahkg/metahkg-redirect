@@ -23,4 +23,4 @@ COPY --from=build /app/.next ./
 
 VOLUME /app/data
 
-RUN yarn start -p ${PORT:-3000}
+CMD yarn start -p ${PORT:-3000}
