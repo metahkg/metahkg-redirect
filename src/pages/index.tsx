@@ -16,6 +16,9 @@ import { safebrowsing_v4 } from "@googleapis/safebrowsing";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import getInfo, { InfoData } from "../lib/getInfo";
 import { UrlHausThreat } from "../types/threat";
+import { config } from "../lib/config";
+import { rateLimit } from "../lib/rateLimit";
+import { regex } from "../lib/regex";
 
 export const getServerSideProps: GetServerSideProps<{
   data: InfoData;
@@ -26,7 +29,27 @@ export const getServerSideProps: GetServerSideProps<{
     "public, s-maxage=1800, stale-while-revalidate=1800"
   );
 
+  const ip =
+    (config.TRUST_PROXY && context.req.headers["x-forwarded-for"]) ||
+    context.req.socket.remoteAddress ||
+    "";
+
+  if (!ip) {
+    context.res.statusCode = 403;
+    return { props: { data: { error: "Access denied" } } };
+  }
+
+  if ((await rateLimit(ip)) >= 10) {
+    context.res.statusCode = 429;
+    return { props: { data: { error: "Too many requests" } } };
+  }
+
   const url = decodeURIComponent(String(context.query.url));
+
+  if (!regex.url.test(url)) {
+    context.res.statusCode = 400;
+    return { props: { data: { error: "Invalid URL" } } };
+  }
 
   const data = await getInfo(url);
 

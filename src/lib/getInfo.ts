@@ -103,14 +103,10 @@ export type InfoData =
     };
 
 export default async function getInfo(url: string): Promise<InfoData> {
-  if (!regex.url.test(url)) {
-    return { error: "Invalid URL" };
-  }
+  const redisKey = `url-${sha256(url)}`;
 
-  const redis_key = `url-${sha256(url)}`;
-
-  const cached = await redis.get(redis_key).catch((err) => {
-    console.log(err);
+  const cached = await redis.get(redisKey).catch((err) => {
+    console.error(err);
     return null;
   });
 
@@ -239,7 +235,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
 
   redis
     .set(
-      redis_key,
+      redisKey,
       JSON.stringify(result),
       "EX",
       // ttl: 30 minutes
