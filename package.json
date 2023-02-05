@@ -12,9 +12,6 @@
   },
   "dependencies": {
     "@googleapis/safebrowsing": "^3.0.0",
-    "@sinclair/typebox": "^0.25.21",
-    "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1",
     "dotenv": "^16.0.3",
     "hash.js": "^1.1.7",
     "ioredis": "^5.3.0",
@@ -38,7 +35,6 @@
     "postcss": "^8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "^2.0.3",
     "tailwindcss": "^3.2.4",
     "tidy-url": "^1.6.11",
     "typescript": "4.9.5"
