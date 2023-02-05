@@ -11,6 +11,8 @@ COPY ./public ./public
 
 RUN yarn build
 
+RUN rm -rf .next/cache
+
 FROM node:18-alpine
 
 WORKDIR /app
