@@ -5,9 +5,9 @@
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && prettier --write src",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint && prettier --write src",
     "test": "tsc --noEmit",
     "prepare": "husky install",
     "docker": "cd docker && docker-compose up -d",
