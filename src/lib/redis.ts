@@ -7,7 +7,7 @@ export const redis = new Redis({
   ...(config.REDIS_PASSWORD && { password: config.REDIS_PASSWORD }),
   connectTimeout: 500,
   maxRetriesPerRequest: 1,
-  keyPrefix: "metahkg-redirect:"
+  keyPrefix: "metahkg-redirect:",
 });
 
 redis.on("error", console.error);
