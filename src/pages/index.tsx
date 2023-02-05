@@ -136,7 +136,7 @@ export default function Redirect({
               title={<Text h4>Redirect URL detected</Text>}
               subtitle={
                 <Text className="break-all nextui-collapse-subtitle">
-                  {data.redirectUrl?.length || 0 > 50
+                  {(data.redirectUrl?.length || 0) > 50
                     ? data.redirectUrl?.slice(0, 50) + "..."
                     : data.redirectUrl}
                 </Text>
