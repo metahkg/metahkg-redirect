@@ -129,7 +129,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
   const controller = new AbortController();
 
   // 3 seconds timeout:
-  const timeoutId = setTimeout(controller.abort, 3000);
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
 
   const actualUrl = await fetch(url, {
     redirect: "follow",
