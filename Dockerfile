@@ -19,10 +19,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY ./package.json ./next.config.js ./
+COPY ./package.json ./next.config.js ./next-env.d.ts ./
 
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/node_modules ./node_modules
+
+COPY ./public ./public
 
 VOLUME /app/data
 
