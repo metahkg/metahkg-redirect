@@ -7,6 +7,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { parsecsv } from "../../lib/parsecsv";
 import { regex } from "../../lib/regex";
+import { TidyURL } from "tidy-url";
 
 dotenv.config();
 
@@ -54,6 +55,8 @@ export type InfoData =
       reachable: boolean;
       redirects?: boolean;
       redirectUrl?: string;
+      tracking?: boolean;
+      tidyUrl?: string;
       safebrowsingThreats: safebrowsing_v4.Schema$GoogleSecuritySafebrowsingV4ThreatMatch[];
       urlhausThreats: UrlHausThreat[];
     }
@@ -92,8 +95,8 @@ export default async function handler(
 
   const controller = new AbortController();
 
-  // 5 second timeout:
-  const timeoutId = setTimeout(controller.abort, 5000);
+  // 3 seconds timeout:
+  const timeoutId = setTimeout(controller.abort, 3000);
 
   const actualUrl = await fetch(url, {
     redirect: "follow",
@@ -104,14 +107,20 @@ export default async function handler(
       if (regex.url.test(res.url)) {
         return res.url;
       }
-      return null;
+      return false;
     })
     .catch(() => null);
+
+  const reachable = actualUrl !== null;
 
   const redirects = actualUrl
     ? new URL(actualUrl).pathname !== url_object.pathname ||
       new URL(actualUrl).host !== url_object.host
     : null;
+
+  const tidyUrl = TidyURL.clean(actualUrl || url).url;
+
+  const tracking = tidyUrl !== (actualUrl || url);
 
   const urlList = [
     url.replace(`${url_object.protocol}//`, ""),
@@ -161,9 +170,11 @@ export default async function handler(
 
   res.status(200).json({
     safe: !Boolean(safebrowsingThreats.length + urlhausThreats.length),
-    reachable: Boolean(actualUrl),
+    reachable,
     ...(actualUrl && redirects && { redirectUrl: actualUrl }),
     ...(redirects !== null && { redirects }),
+    tracking,
+    ...(tracking && { tidyUrl }),
     safebrowsingThreats: safebrowsingThreats,
     urlhausThreats: urlhausThreats,
   });
