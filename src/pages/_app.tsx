@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { createTheme, NextUIProvider } from "@nextui-org/react";
+import { Container, createTheme, NextUIProvider } from "@nextui-org/react";
 import "../styles/globals.css";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -16,7 +16,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         },
       })}
     >
-      <Component {...pageProps} />
+      <Container className="bg-[#222] min-h-[100vh] w-[100vw] max-w-[100vw] max-h-full overflow-y-scroll flex justify-center">
+        <Component {...pageProps} />
+      </Container>
     </NextUIProvider>
   );
 }
