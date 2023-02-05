@@ -8,6 +8,7 @@ import { config } from "./config";
 import { redis } from "./redis";
 import { sha256 } from "./hash";
 import { UrlHausThreat } from "../types/threat";
+import { genCheckUrlList } from "./genCheckUrlList";
 
 let downloaded = false;
 
@@ -143,11 +144,13 @@ export default async function getInfo(url: string): Promise<InfoData> {
     })
     .catch(() => null);
 
+  const actualUrl_object = actualUrl ? new URL(actualUrl) : null;
+
   const reachable = actualUrl !== null;
 
   const redirects = actualUrl
-    ? new URL(actualUrl).pathname !== url_object.pathname ||
-      new URL(actualUrl).host !== url_object.host
+    ? actualUrl_object?.pathname !== url_object.pathname ||
+      actualUrl_object?.host !== url_object.host
     : null;
 
   const tidyUrl = TidyURL.clean(actualUrl || url).url;
@@ -158,22 +161,17 @@ export default async function getInfo(url: string): Promise<InfoData> {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  const urlList = [
-    url.replace(`${url_object.protocol}//`, ""),
-    url.startsWith("https://")
-      ? url.replace(`https://`, "http://")
-      : url.replace(`http://`, "https://"),
-    url_object.origin + url_object.pathname,
-    url_object.origin,
-    url,
-    redirects && actualUrl,
-  ].filter(Boolean) as string[];
+  let checkUrlList = genCheckUrlList(url) as string[];
+
+  if (redirects && actualUrl) {
+    checkUrlList = checkUrlList.concat(genCheckUrlList(actualUrl));
+  }
 
   const safebrowsingThreats = await safebrowsing("v4")
     .threatMatches.find({
       auth: config.SAFEBROWSING_API_KEY,
       requestBody: {
-        threatInfo: { threatEntries: urlList.map((url) => ({ url })) },
+        threatInfo: { threatEntries: checkUrlList.map((url) => ({ url })) },
       },
     })
     .then((res) => res.data.matches || [])
@@ -196,8 +194,8 @@ export default async function getInfo(url: string): Promise<InfoData> {
         ) as UrlHausThreat[]
       ).filter(
         (threats) =>
-          urlList.includes(threats.url) ||
-          urlList.some((url) => url.startsWith(threats.url))
+          checkUrlList.includes(threats.url) ||
+          checkUrlList.some((url) => url.startsWith(threats.url))
       ) || [];
   } catch (e) {
     urlhausThreats = [];
