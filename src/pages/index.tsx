@@ -1,5 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Text, Link, Checkbox, Collapse } from "@nextui-org/react";
+import {
+  Button,
+  Text,
+  Link,
+  Checkbox,
+  Collapse,
+  Container,
+  Grid,
+} from "@nextui-org/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -16,12 +24,13 @@ export default function Redirect() {
   const url = decodeURIComponent(String(router.query.url));
 
   const { data, error } = useSWR<InfoData>(
-    `/api/info?url=${encodeURIComponent(url)}`,
-    async (url: string) => await fetch(url).then((res) => res.json())
+    regex.url.test(url) ? `/api/info?url=${encodeURIComponent(url)}` : null,
+    async (url: string | null) =>
+      url ? await fetch(url).then((res) => res.json()) : null
   );
 
   useEffect(() => {
-    if (data && !("error" in data) && data.safe) {
+    if (data && !("error" in data) && data.safe && timer >= 1) {
       const timerInterval = setInterval(() => {
         setTimer(timer - 1);
       }, 1000);
@@ -41,94 +50,123 @@ export default function Redirect() {
   }
 
   if (timer === 0) {
-    window.location.assign(url);
+    window.location.assign(data.redirectUrl || url);
   }
 
   const threat:
     | safebrowsing_v4.Schema$GoogleSecuritySafebrowsingV4ThreatMatch
-    | UrlHausThreat = data.safebrowsing_threats[0] || data.urlhaus_threats[0];
+    | UrlHausThreat = data.safebrowsingThreats[0] || data.urlhausThreats[0];
 
   return (
-    <div className="bg-[#222] min-h-[100vh] w-[100vw] max-h-full overflow-scroll flex justify-center">
-      <div className="flex flex-col items-center justify-center w-[70vw] mt-[50px] mb-[50px]">
+    <Container className="bg-[#222] min-h-[100vh] w-[100vw] max-w-[100vw] max-h-full overflow-y-scroll flex justify-center">
+      <Container className="flex flex-col items-center justify-center w-[70vw] mt-[50px] mb-[50px]">
         <Text h1 className="flex items-center mb-[20px]">
           <MetahkgLogo light height={60} width={60} />
           Metahkg
         </Text>
 
-        <Text h4>
-          You will be redirected to the following url
-          {data.safe && ` in ${timer} seconds`}:
-        </Text>
-        <code className="mb-[15px]">{url}</code>
+        <Text h4>You will be redirected to the following url:</Text>
+        <code>{url}</code>
+        <Grid.Container gap={2} className="flex flex-col items-center w-full">
+          <Grid>
+            <Collapse.Group
+              accordion={false}
+              splitted
+              shadow
+              className="min-w-[50vw]"
+            >
+              {data.redirects && (
+                <Collapse
+                  title={<Text h4>Redirect URL detected</Text>}
+                  subtitle={data.redirectUrl}
+                >
+                  Metahkg Redirect detected this url redirects to:
+                  <br />
+                  <code>{data.redirectUrl}</code>
+                </Collapse>
+              )}
+              {!data.safe && (
+                <Collapse
+                  title={
+                    <Text h4 color="warning">
+                      <FontAwesomeIcon icon={faWarning} />{" "}
+                      {data.safebrowsingThreats.length
+                        ? "Google safebrowsing"
+                        : "Urlhaus"}{" "}
+                      identified this url as a threat. Proceed with caution.
+                    </Text>
+                  }
+                  subtitle="Click here for more information."
+                  color="warning"
+                >
+                  {data.urlhausThreats[0]?.urlhaus_link && (
+                    <Container>
+                      <Text>
+                        Visit{" "}
+                        <Link
+                          href={data.urlhausThreats[0].urlhaus_link}
+                          target="_blank"
+                          rel="noreferrer"
+                          isExternal
+                        >
+                          urlhaus
+                        </Link>{" "}
+                        for more information on this threat.
+                      </Text>
+                      <Text>{`Threat type: ${
+                        threat.threatType || (threat as UrlHausThreat).threat
+                      }`}</Text>
+                      {threat.platformType && (
+                        <Text>{`Platform: ${threat.platformType}`}</Text>
+                      )}
+                      <Text>{`Url: ${
+                        threat.threat?.url || (threat as UrlHausThreat).url
+                      }`}</Text>
+                      {(threat as UrlHausThreat).tags && (
+                        <Text>{`Tags: ${(threat as UrlHausThreat).tags}`}</Text>
+                      )}
+                    </Container>
+                  )}
+                </Collapse>
+              )}
+            </Collapse.Group>
+          </Grid>
+        </Grid.Container>
 
         {!data.safe && (
-          <div className="mb-[20px] flex flex-col items-center">
-            <Collapse
-              className="min-w-[50vw]"
-              shadow
-              title={
-                <Text h4 color="warning">
-                  <FontAwesomeIcon icon={faWarning} />{" "}
-                  {data.safebrowsing_threats.length
-                    ? "Google safebrowsing"
-                    : "Urlhaus"}{" "}
-                  identified this url as a threat. Proceed with caution.
-                </Text>
-              }
-              subtitle="Click here for more information."
-              color="warning"
-            >
-              {data.urlhaus_threats[0]?.urlhaus_link && (
-                <div>
-                  <Text>
-                    Visit{" "}
-                    <Link
-                      href={data.urlhaus_threats[0].urlhaus_link}
-                      target="_blank"
-                      rel="noreferrer"
-                      isExternal
-                    >
-                      urlhaus
-                    </Link>{" "}
-                    for more information on this threat.
-                  </Text>
-                  <Text>{`Threat type: ${
-                    threat.threatType || (threat as UrlHausThreat).threat
-                  }`}</Text>
-                  {threat.platformType && (
-                    <Text>{`Platform: ${threat.platformType}`}</Text>
-                  )}
-                  <Text>{`Url: ${
-                    threat.threat?.url || (threat as UrlHausThreat).url
-                  }`}</Text>
-                  {(threat as UrlHausThreat).tags && (
-                    <Text>{`Tags: ${(threat as UrlHausThreat).tags}`}</Text>
-                  )}
-                </div>
-              )}
-            </Collapse>
-            <Checkbox className="mt-[10px]" onChange={setDisclaimer}>
+          <Container>
+            <Checkbox className="mb-[10px]" onChange={setDisclaimer}>
               <Text>
                 I understand the possible consequences, and that Metahkg will
-                <br />
                 not be responsible for any possible damages caused by the url.
               </Text>
             </Checkbox>
-          </div>
+          </Container>
         )}
 
-        <div className="flex align-center">
+        <Container className="flex justify-center">
+          {Boolean(data.redirectUrl) && (
+            <Link href={data.redirectUrl}>
+              <Button
+                color="gradient"
+                bordered
+                disabled={!data.safe && !disclaimer}
+                className="mr-[15px]"
+              >
+                Proceed directly{data.safe && ` (in ${timer}s)`}
+              </Button>
+            </Link>
+          )}
           <Link href={url}>
             <Button
               color={data.safe ? "default" : "error"}
               disabled={!data.safe && !disclaimer}
             >
-              Proceed
+              Proceed{data.safe && !data.redirects && ` (in ${timer}s)`}
             </Button>
           </Link>
-        </div>
-      </div>
-    </div>
+        </Container>
+      </Container>
+    </Container>
   );
 }
