@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import {SSRProvider} from "@react-aria/ssr"
 
 export default function RootLayout({
   children,
