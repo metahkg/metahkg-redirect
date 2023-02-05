@@ -51,8 +51,11 @@ setInterval(
 export type InfoData =
   | {
       safe: boolean;
-      safebrowsing_threats: safebrowsing_v4.Schema$GoogleSecuritySafebrowsingV4ThreatMatch[];
-      urlhaus_threats: UrlHausThreat[];
+      reachable: boolean;
+      redirects?: boolean;
+      redirectUrl?: string;
+      safebrowsingThreats: safebrowsing_v4.Schema$GoogleSecuritySafebrowsingV4ThreatMatch[];
+      urlhausThreats: UrlHausThreat[];
     }
   | {
       error: string;
@@ -87,6 +90,29 @@ export default async function handler(
   const { url } = req.query as Static<typeof querySchema>;
   const url_object = new URL(url);
 
+  const controller = new AbortController();
+
+  // 5 second timeout:
+  const timeoutId = setTimeout(controller.abort, 5000);
+
+  const actualUrl = await fetch(url, {
+    redirect: "follow",
+    signal: controller.signal,
+  })
+    .then((res) => {
+      clearTimeout(timeoutId);
+      if (regex.url.test(res.url)) {
+        return res.url;
+      }
+      return null;
+    })
+    .catch(() => null);
+
+  const redirects = actualUrl
+    ? new URL(actualUrl).pathname !== url_object.pathname ||
+      new URL(actualUrl).host !== url_object.host
+    : null;
+
   const urlList = [
     url.replace(`${url_object.protocol}//`, ""),
     url.startsWith("https://")
@@ -95,9 +121,10 @@ export default async function handler(
     url_object.origin + url_object.pathname,
     url_object.origin,
     url,
-  ];
+    redirects && actualUrl,
+  ].filter(Boolean) as string[];
 
-  const safebrowsing_threats = await safebrowsing("v4")
+  const safebrowsingThreats = await safebrowsing("v4")
     .threatMatches.find({
       auth: process.env.SAFEBROWSING_API_KEY,
       requestBody: {
@@ -110,10 +137,14 @@ export default async function handler(
       return null;
     });
 
-  let urlhaus_threats: UrlHausThreat[];
+  if (safebrowsingThreats === null) {
+    return res.status(500).json({ error: "Internal server error." });
+  }
+
+  let urlhausThreats: UrlHausThreat[];
 
   try {
-    urlhaus_threats =
+    urlhausThreats =
       (
         JSON.parse(
           readFileSync("./data/malware.json", "utf8")
@@ -124,17 +155,16 @@ export default async function handler(
           urlList.some((url) => url.startsWith(threats.url))
       ) || [];
   } catch (e) {
-    urlhaus_threats = [];
+    urlhausThreats = [];
     console.error(e);
   }
 
-  if (safebrowsing_threats === null) {
-    return res.status(500).json({ error: "Internal server error." });
-  }
-
   res.status(200).json({
-    safe: !Boolean(safebrowsing_threats.length + urlhaus_threats.length),
-    safebrowsing_threats,
-    urlhaus_threats,
+    safe: !Boolean(safebrowsingThreats.length + urlhausThreats.length),
+    reachable: Boolean(actualUrl),
+    ...(actualUrl && redirects && { redirectUrl: actualUrl }),
+    ...(redirects !== null && { redirects }),
+    safebrowsingThreats: safebrowsingThreats,
+    urlhausThreats: urlhausThreats,
   });
 }
