@@ -13,15 +13,16 @@ RUN yarn build
 
 RUN rm -rf .next/cache
 
+RUN yarn install --production --frozen-lockfile --network-timeout 1000000 
+
 FROM node:18-alpine
 
 WORKDIR /app
 
 COPY ./package.json ./next.config.js ./
 
-RUN yarn install --production --frozen-lockfile --network-timeout 1000000 
-
-COPY --from=build /app/.next ./
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/node_modules ./node_modules
 
 VOLUME /app/data
 
