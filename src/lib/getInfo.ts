@@ -243,7 +243,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
       JSON.stringify(result),
       "EX",
       // ttl: 30 minutes
-      1000 * 60 * 30
+      60 * 30
     )
     .catch(console.error);
 
