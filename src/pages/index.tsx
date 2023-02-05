@@ -18,7 +18,6 @@ import getInfo, { InfoData } from "../lib/getInfo";
 import { UrlHausThreat } from "../types/threat";
 import { config } from "../lib/config";
 import { rateLimit } from "../lib/rateLimit";
-import { regex } from "../lib/regex";
 
 export const getServerSideProps: GetServerSideProps<{
   data: InfoData;
@@ -36,20 +35,15 @@ export const getServerSideProps: GetServerSideProps<{
 
   if (!ip) {
     context.res.statusCode = 403;
-    return { props: { data: { error: "Access denied" } } };
+    return { props: { data: { statusCode: 403, error: "Access denied" } } };
   }
 
   if ((await rateLimit(ip)) >= 10) {
     context.res.statusCode = 429;
-    return { props: { data: { error: "Too many requests" } } };
+    return { props: { data: { statusCode: 429, error: "Too many requests" } } };
   }
 
   const url = decodeURIComponent(String(context.query.url));
-
-  if (!regex.url.test(url)) {
-    context.res.statusCode = 400;
-    return { props: { data: { error: "Invalid URL" } } };
-  }
 
   const data = await getInfo(url);
 
@@ -65,6 +59,13 @@ export const getServerSideProps: GetServerSideProps<{
         destination: url,
         statusCode: 302,
       },
+    };
+  }
+
+  if ("error" in data) {
+    context.res.statusCode = data.statusCode;
+    return {
+      props: { data },
     };
   }
 

@@ -99,10 +99,15 @@ export type InfoData =
       urlhausThreats: UrlHausThreat[];
     }
   | {
+      statusCode: number;
       error: string;
     };
 
 export default async function getInfo(url: string): Promise<InfoData> {
+  if (!regex.url.test(url)) {
+    return { statusCode: 400, error: "Invalid URL" };
+  }
+
   const redisKey = `url-${sha256(url)}`;
 
   const cached = await redis.get(redisKey).catch((err) => {
@@ -178,7 +183,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
     });
 
   if (safebrowsingThreats === null) {
-    return { error: "Internal server error." };
+    return { statusCode: 500, error: "Internal server error." };
   }
 
   let urlhausThreats: UrlHausThreat[];
