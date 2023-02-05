@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  metahkg-redirect:
+    image: registry.gitlab.com/metahkg/metahkg-redirect/${branch:-dev}:${version:-latest}
+    container_name: metahkg-redirect
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    tty: true
+    restart: always
+    environment:
+      PORT: ${PORT:-3000}
+      SAFEBROWSING_API_KEY: ${SAFEBROWSING_API_KEY}
+      REDIS_HOST: metahkg-redirect-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    mem_limit: 500mb
+    memswap_limit: 500mb
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+    networks:
+      - metahkg-redirect-network
+    volumes:
+      - ./data:/app/data
+  redis:
+    image: redis:alpine
+    container_name: metahkg-redirect-redis
+    command: redis-server --save 10 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    restart: always
+    mem_limit: 500mb
+    memswap_limit: 500mb
+    ports:
+      - ${REDIS_PORT}:6379
+    networks:
+      - metahkg-redirect-network
+    volumes:
+      - ./redis_data:/data
+networks:
+  metahkg-redirect-network:
+    driver: bridge

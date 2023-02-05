@@ -9,7 +9,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "tsc --noEmit",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docker": "cd docker && docker-compose up -d",
+    "docker:build": "cd docker && docker-compose build",
+    "docker:logs": "cd docker && docker-compose logs",
+    "docker:down": "cd docker && docker-compose down"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
