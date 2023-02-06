@@ -321,7 +321,8 @@ export default function Redirect({
                 }}
                 className="[&>span]:mx-[10px]"
               >
-                <FontAwesomeIcon icon={faCancel} /> Cancel
+                <FontAwesomeIcon icon={faCancel} className="mr-[5px]" />
+                Cancel
               </Button>
             </Grid>
           )}
