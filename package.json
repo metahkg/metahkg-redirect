@@ -10,7 +10,9 @@
     "lint": "next lint && prettier --write src",
     "test": "tsc --noEmit",
     "prepare": "husky install",
-    "docker": "cd docker && docker-compose up -d",
+    "docker": "cd docker && docker-compose pull && docker-compose up -d",
+    "docker:prebuilt": "yarn docker",
+    "docker:source": "cd docker && docker-compose up -d --build",
     "docker:build": "cd docker && docker-compose build",
     "docker:logs": "cd docker && docker-compose logs",
     "docker:down": "cd docker && docker-compose down"
