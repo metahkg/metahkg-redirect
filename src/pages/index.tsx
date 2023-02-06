@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<{
   // 30 minutes
   context.res.setHeader(
     "Cache-Control",
-    "public, s-maxage=1800, stale-while-revalidate=1800"
+    "public, s-maxage=900, stale-while-revalidate=900"
   );
 
   const ip =
