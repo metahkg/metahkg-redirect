@@ -12,6 +12,9 @@ import { genCheckUrlList } from "./genCheckUrlList";
 
 let downloaded = false;
 
+let malware_urls: UrlHausThreat[];
+let malware_hosts: string[];
+
 async function downloadData() {
   try {
     mkdirSync("data", { recursive: true });
@@ -36,14 +39,11 @@ async function downloadData() {
         "reporter",
       ];
 
-      const malware_urls_json = parsecsv(malware_urls_csv, columns, {
+      malware_urls = parsecsv(malware_urls_csv, columns, {
         comments: "#",
         delimiter: ",",
-      });
-      writeFileSync(
-        "data/malware-urls.json",
-        JSON.stringify(malware_urls_json)
-      );
+      }) as unknown as UrlHausThreat[];
+      writeFileSync("data/malware-urls.json", JSON.stringify(malware_urls));
     }
 
     const malware_hosts_txt = await fetch(
@@ -55,15 +55,12 @@ async function downloadData() {
       .catch(() => null);
 
     if (malware_hosts_txt) {
-      const malware_hosts_json = malware_hosts_txt
+      malware_hosts = malware_hosts_txt
         .trim()
         .split("\n")
         .filter((line) => !line.startsWith("#"))
         .map((line) => line.trim());
-      writeFileSync(
-        "data/malware-hosts.json",
-        JSON.stringify(malware_hosts_json)
-      );
+      writeFileSync("data/malware-hosts.json", JSON.stringify(malware_hosts));
     }
   } catch (e) {
     console.error(e);
@@ -72,8 +69,8 @@ async function downloadData() {
 }
 
 try {
-  statSync("data/malware-urls.json");
-  statSync("data/malware-hosts.json");
+  malware_urls = JSON.parse(readFileSync("data/malware-urls.json", "utf8"));
+  malware_hosts = JSON.parse(readFileSync("data/malware-hosts.json", "utf8"));
   downloaded = true;
 } catch {
   downloaded = false;
@@ -188,11 +185,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
 
   try {
     urlhausThreats =
-      (
-        JSON.parse(
-          readFileSync("data/malware-urls.json", "utf8")
-        ) as UrlHausThreat[]
-      ).filter(
+      malware_urls.filter(
         (threats) =>
           checkUrlList.includes(threats.url) ||
           checkUrlList.some((url) => url.startsWith(threats.url))
@@ -205,14 +198,11 @@ export default async function getInfo(url: string): Promise<InfoData> {
   let malicious: boolean = false;
   let maliciousHost: string = "";
   try {
-    const maliciousHosts = JSON.parse(
-      readFileSync("data/malware-hosts.json", "utf8")
-    ) as string[];
     maliciousHost = (
       [redirects && actualUrl, url].filter(Boolean) as string[]
     ).reduce((prev, curr: string) => {
       const host = new URL(curr).host;
-      return maliciousHosts.includes(host) ? host : prev;
+      return malware_hosts.includes(host) ? host : prev;
     }, maliciousHost);
     if (maliciousHost) {
       malicious = true;
