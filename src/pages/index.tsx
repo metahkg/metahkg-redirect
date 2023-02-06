@@ -19,6 +19,7 @@ import { UrlHausThreat } from "../types/threat";
 import { config } from "../lib/config";
 import { rateLimit } from "../lib/rateLimit";
 import { useDarkMode } from "../components/AppContext";
+import { useIsSmallScreen } from "../hooks/useWindowSize";
 
 export const getServerSideProps: GetServerSideProps<{
   data: InfoData;
@@ -85,6 +86,7 @@ export default function Redirect({
   const [disclaimer, setDisclaimer] = useState(false);
   const [cancel, setCancel] = useState(false);
   const [darkMode] = useDarkMode();
+  const isSmallScreen = useIsSmallScreen();
   const url = decodeURIComponent(String(router.query.url));
 
   const countdown =
@@ -317,10 +319,9 @@ export default function Redirect({
                 onClick={() => {
                   setCancel(true);
                 }}
+                className="[&>span]:mx-[10px]"
               >
-                <Text className="!mx-[10px]">
-                  <FontAwesomeIcon icon={faCancel} /> Cancel
-                </Text>
+                <FontAwesomeIcon icon={faCancel} /> Cancel
               </Button>
             </Grid>
           )}
@@ -330,11 +331,19 @@ export default function Redirect({
   }, [countdown, data, disclaimer, timer, url]);
 
   return (
-    <Container className="flex flex-col items-center justify-center w-[90vw] my-[50px]">
-      <Text h1 className="flex items-center mb-[20px]">
-        <MetahkgLogo svg light={darkMode} height={60} width={60} />
-        Metahkg Redirect
-      </Text>
+    <Container className="flex flex-col items-center justify-center w-90 my-[50px]">
+      <Container className="flex justify-center items-center mb-[20px] flex-nowrap max-w-full">
+        <MetahkgLogo
+          className="inline-block"
+          svg
+          light={darkMode}
+          height={60}
+          width={60}
+        />
+        <Text className="inline-block mb-0" h1>
+          Metahkg{!isSmallScreen && " Redirect"}
+        </Text>
+      </Container>
       {body}
     </Container>
   );
