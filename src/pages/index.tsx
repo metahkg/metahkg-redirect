@@ -18,6 +18,7 @@ import getInfo, { InfoData } from "../lib/getInfo";
 import { UrlHausThreat } from "../types/threat";
 import { config } from "../lib/config";
 import { rateLimit } from "../lib/rateLimit";
+import { useDarkMode } from "../components/AppContext";
 
 export const getServerSideProps: GetServerSideProps<{
   data: InfoData;
@@ -83,6 +84,7 @@ export default function Redirect({
   const [timer, setTimer] = useState(5);
   const [disclaimer, setDisclaimer] = useState(false);
   const [cancel, setCancel] = useState(false);
+  const [darkMode] = useDarkMode();
   const url = decodeURIComponent(String(router.query.url));
 
   const countdown =
@@ -121,14 +123,16 @@ export default function Redirect({
         <Text h4>You will be redirected to the following URL:</Text>
         <code className="break-all">{url}</code>
 
-        <Collapse.Group splitted className="min-w-[60vw] max-w-[80vw] ">
+        <Collapse.Group splitted className="min-w-[60vw] max-w-[80vw]">
           {data.tracking && (
             <Collapse title={<Text h4>Tracking parameters detected</Text>}>
-              Metahkg Redirect detected tracking parameters in the URL.
-              <br />
-              Cleaned URL:
-              <br />
-              <code className="break-all">{data.tidyUrl}</code>
+              <Text>
+                Metahkg Redirect detected tracking parameters in the URL.
+                <br />
+                Cleaned URL:
+                <br />
+                <code className="break-all">{data.tidyUrl}</code>
+              </Text>
             </Collapse>
           )}
           {data.redirects && (
@@ -142,9 +146,11 @@ export default function Redirect({
                 </Text>
               }
             >
-              Metahkg Redirect detected this URL redirects to:
-              <br />
-              <code className="break-all">{data.redirectUrl}</code>
+              <Text>
+                Metahkg Redirect detected this URL redirects to:
+                <br />
+                <code className="break-all">{data.redirectUrl}</code>
+              </Text>
             </Collapse>
           )}
           {!data.reachable && (
@@ -155,12 +161,14 @@ export default function Redirect({
                 </Text>
               }
             >
-              Metahkg Redirect cannot reach the URL.
-              <br />
-              Metahkg Redirect may have been blocked by the URL, or the URL does
-              not exist.
-              <br />
-              Visit at your own risk.
+              <Text>
+                Metahkg Redirect cannot reach the URL.
+                <br />
+                Metahkg Redirect may have been blocked by the URL, or the URL
+                does not exist.
+                <br />
+                Visit at your own risk.
+              </Text>
             </Collapse>
           )}
           {data.unsafe && (
@@ -265,11 +273,10 @@ export default function Redirect({
                 color="gradient"
                 bordered
                 disabled={data.unsafe && !disclaimer}
+                className="[&>span]:mx-[10px]"
               >
-                <Text className="!mx-[10px]">
-                  Proceed to cleaned URL
-                  {countdown && ` (in ${timer}s)`}
-                </Text>
+                Proceed to cleaned URL
+                {countdown && ` (in ${timer}s)`}
               </Button>
             </Grid>
           )}
@@ -281,11 +288,10 @@ export default function Redirect({
                 color="gradient"
                 bordered
                 disabled={data.unsafe && !disclaimer}
+                className="[&>span]:mx-[10px]"
               >
-                <Text className="!mx-[10px]">
-                  Proceed directly
-                  {countdown && !data.tracking && ` (in ${timer}s)`}
-                </Text>
+                Proceed directly
+                {countdown && !data.tracking && ` (in ${timer}s)`}
               </Button>
             </Grid>
           )}
@@ -295,14 +301,13 @@ export default function Redirect({
               href={url}
               color="default"
               disabled={data.unsafe && !disclaimer}
+              className="[&>span]:mx-[10px]"
             >
-              <Text className="!mx-[10px]">
-                Proceed
-                {countdown &&
-                  !data.redirects &&
-                  !data.tracking &&
-                  ` (in ${timer}s)`}
-              </Text>
+              Proceed
+              {countdown &&
+                !data.redirects &&
+                !data.tracking &&
+                ` (in ${timer}s)`}
             </Button>
           </Grid>
           {countdown && (
@@ -325,9 +330,9 @@ export default function Redirect({
   }, [countdown, data, disclaimer, timer, url]);
 
   return (
-    <Container className="flex flex-col items-center justify-center w-[80vw] my-[50px]">
+    <Container className="flex flex-col items-center justify-center w-[90vw] my-[50px]">
       <Text h1 className="flex items-center mb-[20px]">
-        <MetahkgLogo light height={60} width={60} />
+        <MetahkgLogo svg light={darkMode} height={60} width={60} />
         Metahkg Redirect
       </Text>
       {body}

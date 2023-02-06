@@ -38,7 +38,11 @@ export default function MetahkgLogo(props: {
     props;
   return (
     <Image
-      className={`${svg && light ? css.svgwhite : ""} ${className || ""}`}
+      className={`${
+        svg
+          ? "dark:invert dark:sepia-0 dark:saturate-0 dark:hue-rotate-[93deg] dark:!brightness-[103%]"
+          : ""
+      } ${className || ""}`}
       style={sx}
       src={
         (svg && "/images/logo.svg") ||
