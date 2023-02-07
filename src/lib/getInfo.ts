@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { safebrowsing, safebrowsing_v4 } from "@googleapis/safebrowsing";
-import { mkdirSync, readFileSync, statSync, writeFileSync } from "fs";
+import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { parsecsv } from "./parsecsv";
 import { regex } from "./regex";
 import { TidyURL } from "tidy-url";
@@ -9,6 +9,7 @@ import { redis } from "./redis";
 import { sha256 } from "./hash";
 import { UrlHausThreat } from "../types/threat";
 import { genCheckUrlList } from "./genCheckUrlList";
+import { isForbiddenHost } from "./isForbiddenHost";
 
 let downloaded = false;
 
@@ -123,6 +124,10 @@ export default async function getInfo(url: string): Promise<InfoData> {
 
   const url_object = new URL(url);
 
+  if (await isForbiddenHost(url_object.hostname)) {
+    return { statusCode: 403, error: "Forbidden" };
+  }
+
   const controller = new AbortController();
 
   // 3 seconds timeout:
@@ -132,9 +137,12 @@ export default async function getInfo(url: string): Promise<InfoData> {
     redirect: "follow",
     signal: controller.signal,
   })
-    .then((res) => {
+    .then(async (res) => {
       clearTimeout(timeoutId);
       if (regex.url.test(res.url)) {
+        if (await isForbiddenHost(res.url)) {
+          return false;
+        }
         return res.url;
       }
       return false;
