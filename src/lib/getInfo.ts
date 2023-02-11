@@ -10,13 +10,14 @@ import { sha256 } from "./hash";
 import { UrlHausThreat } from "../types/threat";
 import { genCheckUrlList } from "./genCheckUrlList";
 import { isForbiddenHost } from "./isForbiddenHost";
+import { client, db, malwareHostsCl, malwareUrlsCl } from "./db";
+import { ObjectId } from "mongodb";
 
 let downloaded = false;
 
-let malware_urls: UrlHausThreat[];
-let malware_hosts: string[];
-
 async function downloadData() {
+  await client.connect();
+
   try {
     mkdirSync("data", { recursive: true });
 
@@ -28,24 +29,23 @@ async function downloadData() {
       .then((res) => res.text())
       .catch(() => null);
 
-    if (malware_urls_csv) {
-      const columns = [
-        "id",
-        "dateadded",
-        "url",
-        "url_status",
-        "threat",
-        "tags",
-        "urlhaus_link",
-        "reporter",
-      ];
+    const columns = [
+      "id",
+      "dateadded",
+      "url",
+      "url_status",
+      "threat",
+      "tags",
+      "urlhaus_link",
+      "reporter",
+    ];
 
-      malware_urls = parsecsv(malware_urls_csv, columns, {
-        comments: "#",
-        delimiter: ",",
-      }) as unknown as UrlHausThreat[];
-      writeFileSync("data/malware-urls.json", JSON.stringify(malware_urls));
-    }
+    const malware_urls = malware_urls_csv
+      ? (parsecsv(malware_urls_csv, columns, {
+          comments: "#",
+          delimiter: ",",
+        }) as unknown as UrlHausThreat[])
+      : null;
 
     const malware_hosts_txt = await fetch(
       // malware hosts
@@ -55,13 +55,30 @@ async function downloadData() {
       .then((res) => res.text())
       .catch(() => null);
 
-    if (malware_hosts_txt) {
-      malware_hosts = malware_hosts_txt
-        .trim()
-        .split("\n")
-        .filter((line) => !line.startsWith("#"))
-        .map((line) => line.trim());
-      writeFileSync("data/malware-hosts.json", JSON.stringify(malware_hosts));
+    const malware_hosts = malware_hosts_txt
+      ? malware_hosts_txt
+          .trim()
+          .split("\n")
+          .filter((line) => !line.startsWith("#"))
+          .map((line) => line.trim())
+          .map((host) => ({ host }))
+      : null;
+
+    try {
+      if (malware_urls) {
+        await db.collection("malware-urls-temp").createIndex({ url: 1 });
+        await db.collection("malware-urls-temp").insertMany(malware_urls);
+        await malwareUrlsCl.drop().catch(() => {});
+        await db.renameCollection("malware-urls-temp", "malware-urls");
+      }
+      if (malware_hosts) {
+        await db.collection("malware-hosts-temp").createIndex({ host: 1 });
+        await db.collection("malware-hosts-temp").insertMany(malware_hosts);
+        await malwareHostsCl.drop().catch(() => {});
+        await db.renameCollection("malware-hosts-temp", "malware-hosts");
+      }
+    } finally {
+      await client.close();
     }
   } catch (e) {
     console.error(e);
@@ -69,13 +86,22 @@ async function downloadData() {
   downloaded = true;
 }
 
-try {
-  malware_urls = JSON.parse(readFileSync("data/malware-urls.json", "utf8"));
-  malware_hosts = JSON.parse(readFileSync("data/malware-hosts.json", "utf8"));
-  downloaded = true;
-} catch {
-  downloaded = false;
-}
+async () => {
+  try {
+    await client.connect();
+    if (
+      (await malwareUrlsCl.countDocuments()) +
+        (await malwareHostsCl.countDocuments()) >
+      0
+    ) {
+      downloaded = true;
+    }
+  } catch {
+    downloaded = false;
+  } finally {
+    await client.close();
+  }
+};
 
 downloadData();
 setInterval(
@@ -189,15 +215,20 @@ export default async function getInfo(url: string): Promise<InfoData> {
     return { statusCode: 500, error: "Internal server error." };
   }
 
+  await client.connect();
+
   let urlhausThreats: UrlHausThreat[];
 
   try {
     urlhausThreats =
-      malware_urls.filter(
-        (threats) =>
-          checkUrlList.includes(threats.url) ||
-          checkUrlList.some((url) => url.startsWith(threats.url))
-      ) || [];
+      ((await malwareUrlsCl
+        .find({
+          url: {
+            $in: checkUrlList,
+          },
+        })
+        .project({ _id: 0 })
+        .toArray()) as (UrlHausThreat & { _id?: ObjectId })[]) || [];
   } catch (e) {
     urlhausThreats = [];
     console.error(e);
@@ -207,17 +238,23 @@ export default async function getInfo(url: string): Promise<InfoData> {
   let maliciousHost: string = "";
   try {
     maliciousHost = (
-      [redirects && actualUrl, url].filter(Boolean) as string[]
-    ).reduce((prev, curr: string) => {
-      const host = new URL(curr).host;
-      return malware_hosts.includes(host) ? host : prev;
-    }, maliciousHost);
+      (await malwareHostsCl.findOne({
+        host: {
+          $in: ([redirects && actualUrl, url].filter(Boolean) as string[]).map(
+            (url) => new URL(url).host
+          ),
+        },
+      })) as { _id?: ObjectId; host: string }
+    )?.host;
+
     if (maliciousHost) {
       malicious = true;
     }
   } catch (e) {
     console.error(e);
   }
+
+  await client.close();
 
   const result = {
     unsafe: Boolean(
