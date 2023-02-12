@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<{
     return { props: { data: { statusCode: 403, error: "Access denied" } } };
   }
 
-  if ((await rateLimit(ip)) >= 10) {
+  if ((await rateLimit(ip, 30, 10)) >= 10) {
     context.res.statusCode = 429;
     return { props: { data: { statusCode: 429, error: "Too many requests" } } };
   }
