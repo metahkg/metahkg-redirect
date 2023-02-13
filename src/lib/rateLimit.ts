@@ -4,7 +4,7 @@ import { redis } from "./redis";
 export async function rateLimit(
   ip: string,
   /** in seconds */
-  timeout: number = 30,
+  timeout = 30,
   max?: number
 ): Promise<number> {
   const hashedIp = sha256(ip);

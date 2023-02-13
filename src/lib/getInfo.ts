@@ -234,8 +234,8 @@ export default async function getInfo(url: string): Promise<InfoData> {
     console.error(e);
   }
 
-  let malicious: boolean = false;
-  let maliciousHost: string = "";
+  let malicious = false;
+  let maliciousHost = "";
   try {
     maliciousHost = (
       (await malwareHostsCl.findOne({
