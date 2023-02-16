@@ -1,5 +1,6 @@
 import React from "react";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import {
   Button,
   Container,
@@ -28,6 +29,10 @@ export function MyApp({ Component, pageProps }: AppProps) {
         },
       })}
     >
+      <Head>
+        <title>Metahkg Redirect</title>
+        <meta name="description" content="Metahkg redirection page" />
+      </Head>
       <Container className="dark:bg-[#222] bg-[white] min-h-[100vh] w-[100vw] max-w-[100vw] max-h-full overflow-y-scroll flex relative justify-center">
         <Tooltip
           content={`Switch to ${darkMode ? "light" : "dark"} mode`}
