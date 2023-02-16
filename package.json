@@ -15,7 +15,8 @@
     "docker:source": "cd docker && docker-compose up -d --build",
     "docker:build": "cd docker && docker-compose build",
     "docker:logs": "cd docker && docker-compose logs",
-    "docker:down": "cd docker && docker-compose down"
+    "docker:down": "cd docker && docker-compose down",
+    "changelog": "generate-changelog && prettier --write CHANGELOG.md"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
@@ -45,6 +46,7 @@
     "autoprefixer": "^10.4.13",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
+    "generate-changelog": "^1.8.0",
     "husky": "^8.0.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.3",
