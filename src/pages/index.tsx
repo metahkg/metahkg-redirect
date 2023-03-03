@@ -147,7 +147,7 @@ export default function Redirect({
               subtitle={
                 <Text className="break-all nextui-collapse-subtitle">
                   {(data.redirectUrl?.length || 0) > 50
-                    ? data.redirectUrl?.slice(0, 50) + "..."
+                    ? `${data.redirectUrl?.slice(0, 50)}...`
                     : data.redirectUrl}
                 </Text>
               }
