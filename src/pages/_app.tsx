@@ -1,5 +1,6 @@
 import React from "react";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import {
   Button,
   Container,
@@ -11,7 +12,6 @@ import "../styles/globals.css";
 import AppContextProvider, { useDarkMode } from "../components/AppContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
-import Head from "next/head";
 
 export function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useDarkMode();
