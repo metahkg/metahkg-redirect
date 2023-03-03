@@ -8,6 +8,9 @@ const AppContext = createContext<AppContextInterface>(
   {} as AppContextInterface
 );
 
+/**
+ * @description React context provider component. Provides app-wide states.
+ */
 export default function AppContextProvider(props: {
   children: React.ReactNode;
 }) {
@@ -35,6 +38,9 @@ export default function AppContextProvider(props: {
   );
 }
 
+/**
+ * @description React hook to access dark mode state.
+ */
 export function useDarkMode() {
   const { darkMode } = useContext(AppContext);
   return darkMode;

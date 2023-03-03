@@ -1,3 +1,7 @@
+/**
+ * @description Generate a list of urls to check
+ * @param {string} url - Url to check
+ */
 export function genCheckUrlList(url: string): string[] {
   let url_object: URL | null;
 

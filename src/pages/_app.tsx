@@ -13,9 +13,15 @@ import AppContextProvider, { useDarkMode } from "../components/AppContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
 
+/**
+ * @description The main Next.js app.
+ */
 export function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useDarkMode();
 
+  /**
+   * @description Toggles the dark mode.
+   */
   function toggleDarkMode() {
     setDarkMode(!darkMode);
   }
@@ -57,6 +63,9 @@ export function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
+/**
+ * @description Wraps the app in the context provider.
+ */
 export default function App(props: AppProps) {
   return (
     <AppContextProvider>

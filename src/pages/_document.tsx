@@ -9,6 +9,9 @@ import Document, {
 } from "next/document";
 import { CssBaseline } from "@nextui-org/react";
 
+/**
+ * @description Custom Next.js document
+ */
 class MyDocument extends Document {
   static async getInitialProps(
     ctx: DocumentContext

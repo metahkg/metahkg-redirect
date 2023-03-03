@@ -15,6 +15,9 @@ import { ObjectId } from "mongodb";
 
 let downloaded = false;
 
+/**
+ * @description download malware threats data from urlhaus.abuse.ch
+ */
 async function downloadData() {
   await client.connect();
 
@@ -128,6 +131,10 @@ export type InfoData =
       error: string;
     };
 
+/**
+ * @description get info for url - threats, redirects, tracking, reachability
+ * @param {string} url - url to check
+ */
 export default async function getInfo(url: string): Promise<InfoData> {
   if (!regex.url.test(url)) {
     return { statusCode: 400, error: "Invalid URL" };

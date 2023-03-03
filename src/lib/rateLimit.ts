@@ -1,6 +1,10 @@
 import { sha256 } from "./hash";
 import { redis } from "./redis";
 
+/**
+ * @description rate limit implementation using redis
+ * @returns number of requests from ip in the time window
+ */
 export async function rateLimit(
   ip: string,
   /** in seconds */

@@ -21,6 +21,13 @@ import { rateLimit } from "../lib/rateLimit";
 import { useDarkMode } from "../components/AppContext";
 import { useIsSmallScreen } from "../hooks/useWindowSize";
 
+/**
+ * @description get server side props
+ * @returns 403 if access denied
+ * @returns 429 if rate limit exceeded
+ * @returns 302 redirect if no problems found
+ * @returns the data if some problems are found
+ */
 export const getServerSideProps: GetServerSideProps<{
   data: InfoData;
 }> = async (context) => {
@@ -78,6 +85,9 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
+/**
+ * @description The redirect page
+ */
 export default function Redirect({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -107,6 +117,9 @@ export default function Redirect({
     window.location.assign(data?.redirectUrl || url);
   }
 
+  /**
+   * @description handle cancel
+   */
   function handleCancel() {
     setCancel(true);
   }
