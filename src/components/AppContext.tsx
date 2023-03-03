@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-const AppContext = createContext<{
+interface AppContextInterface {
   darkMode: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-  // @ts-ignore
-}>(null);
+}
+
+const AppContext = createContext<AppContextInterface>(
+  {} as AppContextInterface
+);
 
 export default function AppContextProvider(props: {
   children: React.ReactNode;
