@@ -107,6 +107,10 @@ export default function Redirect({
     window.location.assign(data?.redirectUrl || url);
   }
 
+  function handleCancel() {
+    setCancel(true);
+  }
+
   const body = useMemo(() => {
     if ("error" in data) {
       return (
@@ -316,9 +320,7 @@ export default function Redirect({
             <Grid>
               <Button
                 color="error"
-                onClick={() => {
-                  setCancel(true);
-                }}
+                onClick={handleCancel}
                 className="[&>span]:mx-[10px]"
               >
                 <FontAwesomeIcon icon={faCancel} className="mr-[5px]" />

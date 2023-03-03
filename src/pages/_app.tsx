@@ -16,6 +16,10 @@ import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
 export function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useDarkMode();
 
+  function toggleDarkMode() {
+    setDarkMode(!darkMode);
+  }
+
   return (
     <>
       <Head>
@@ -42,14 +46,7 @@ export function MyApp({ Component, pageProps }: AppProps) {
             placement="bottom"
             keepMounted
           >
-            <Button
-              auto
-              rounded
-              light
-              onPress={() => {
-                setDarkMode(!darkMode);
-              }}
-            >
+            <Button auto rounded light onPress={toggleDarkMode}>
               <FontAwesomeIcon size="lg" icon={darkMode ? faMoon : faSun} />{" "}
             </Button>
           </Tooltip>
