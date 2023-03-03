@@ -39,6 +39,9 @@ export function useWindowSize() {
   return windowSize;
 }
 
+/**
+ * @description Hook to get if is small screen
+ */
 export function useIsSmallScreen() {
   const { width } = useWindowSize();
   // use 1280 as default

@@ -13,6 +13,9 @@ import { CssBaseline } from "@nextui-org/react";
  * @description Custom Next.js document
  */
 class MyDocument extends Document {
+  /**
+   * @description get initial props
+   */
   static async getInitialProps(
     ctx: DocumentContext
   ): Promise<DocumentInitialProps> {
@@ -21,6 +24,9 @@ class MyDocument extends Document {
     return initialProps;
   }
 
+  /**
+   * @description Renders the document
+   */
   render() {
     return (
       <Html lang="en">
