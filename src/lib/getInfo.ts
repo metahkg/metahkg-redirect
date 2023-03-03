@@ -86,7 +86,7 @@ async function downloadData() {
   downloaded = true;
 }
 
-async () => {
+(async () => {
   try {
     await client.connect();
     if (
@@ -101,7 +101,7 @@ async () => {
   } finally {
     await client.close();
   }
-};
+})();
 
 downloadData();
 setInterval(
