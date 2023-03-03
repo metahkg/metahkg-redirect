@@ -9,7 +9,7 @@ import {
   Grid,
 } from "@nextui-org/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MetahkgLogo from "../components/logo";
 import { faCancel, faWarning } from "@fortawesome/free-solid-svg-icons";
 import { safebrowsing_v4 } from "@googleapis/safebrowsing";
@@ -120,9 +120,9 @@ export default function Redirect({
   /**
    * @description handle cancel
    */
-  function handleCancel() {
+  const handleCancel = useCallback(() => {
     setCancel(true);
-  }
+  }, [setCancel]);
 
   const body = useMemo(() => {
     if ("error" in data) {
@@ -344,7 +344,7 @@ export default function Redirect({
         </Grid.Container>
       </React.Fragment>
     );
-  }, [countdown, data, disclaimer, timer, url]);
+  }, [countdown, data, disclaimer, handleCancel, timer, url]);
 
   return (
     <Container className="flex flex-col items-center justify-center w-90 my-[50px]">

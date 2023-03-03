@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import {
@@ -22,9 +22,9 @@ export function MyApp({ Component, pageProps }: AppProps) {
   /**
    * @description Toggles the dark mode.
    */
-  function toggleDarkMode() {
+  const toggleDarkMode = useCallback(() => {
     setDarkMode(!darkMode);
-  }
+  }, [darkMode, setDarkMode]);
 
   return (
     <>
