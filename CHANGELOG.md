@@ -1,3 +1,26 @@
+#### 6.4.1 (2023-03-03)
+
+##### Chores
+
+*  v6.4.1 (359f7aa7)
+*  add docstrings (d19f0e80)
+*  add docstrings (a8c74b49)
+*  use property shorthand (b10a4d2a)
+*  use template string (8a583691)
+*  upgrade dependencies (29b6b816)
+*  update eslint config (2cf8d600)
+*  opt out of experimental appDir (c725f7d9)
+
+##### Bug Fixes
+
+*  use useCallback (252d1ce4)
+*  remove @ts-ignore (11aa285b)
+*  remove arrow functions in jsx (8bd44be6)
+*  add title and description (102051cb)
+*  remove unused variables (a9c68d92)
+* **regex:**  remove unnecessary escapes (00311b4c)
+* **getInfo:**  function not executed (651db056)
+
 #### 6.4.0 (2023-02-16)
 
 ##### New Features
