@@ -267,8 +267,8 @@ export default async function getInfo(url: string): Promise<InfoData> {
     ...(redirects !== null && { redirects }),
     tracking,
     ...(tracking && { tidyUrl }),
-    safebrowsingThreats: safebrowsingThreats,
-    urlhausThreats: urlhausThreats,
+    safebrowsingThreats,
+    urlhausThreats,
   };
 
   redis
