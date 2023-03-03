@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 
+/**
+ * @description Hook to get the window size
+ */
 export function useWindowSize() {
   // Initialize state with undefined width/height so server and client renders match
   // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
@@ -36,6 +39,9 @@ export function useWindowSize() {
   return windowSize;
 }
 
+/**
+ * @description Hook to get if is small screen
+ */
 export function useIsSmallScreen() {
   const { width } = useWindowSize();
   // use 1280 as default

@@ -9,7 +9,7 @@ import {
   Grid,
 } from "@nextui-org/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MetahkgLogo from "../components/logo";
 import { faCancel, faWarning } from "@fortawesome/free-solid-svg-icons";
 import { safebrowsing_v4 } from "@googleapis/safebrowsing";
@@ -21,6 +21,13 @@ import { rateLimit } from "../lib/rateLimit";
 import { useDarkMode } from "../components/AppContext";
 import { useIsSmallScreen } from "../hooks/useWindowSize";
 
+/**
+ * @description get server side props
+ * @returns 403 if access denied
+ * @returns 429 if rate limit exceeded
+ * @returns 302 redirect if no problems found
+ * @returns the data if some problems are found
+ */
 export const getServerSideProps: GetServerSideProps<{
   data: InfoData;
 }> = async (context) => {
@@ -40,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<{
     return { props: { data: { statusCode: 403, error: "Access denied" } } };
   }
 
-  if ((await rateLimit(ip)) >= 10) {
+  if ((await rateLimit(ip, 30, 10)) >= 10) {
     context.res.statusCode = 429;
     return { props: { data: { statusCode: 429, error: "Too many requests" } } };
   }
@@ -78,6 +85,9 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
+/**
+ * @description The redirect page
+ */
 export default function Redirect({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -106,6 +116,13 @@ export default function Redirect({
   if (timer === 0 && countdown) {
     window.location.assign(data?.redirectUrl || url);
   }
+
+  /**
+   * @description handle cancel
+   */
+  const handleCancel = useCallback(() => {
+    setCancel(true);
+  }, [setCancel]);
 
   const body = useMemo(() => {
     if ("error" in data) {
@@ -143,7 +160,7 @@ export default function Redirect({
               subtitle={
                 <Text className="break-all nextui-collapse-subtitle">
                   {(data.redirectUrl?.length || 0) > 50
-                    ? data.redirectUrl?.slice(0, 50) + "..."
+                    ? `${data.redirectUrl?.slice(0, 50)}...`
                     : data.redirectUrl}
                 </Text>
               }
@@ -316,9 +333,7 @@ export default function Redirect({
             <Grid>
               <Button
                 color="error"
-                onClick={() => {
-                  setCancel(true);
-                }}
+                onClick={handleCancel}
                 className="[&>span]:mx-[10px]"
               >
                 <FontAwesomeIcon icon={faCancel} className="mr-[5px]" />
@@ -329,7 +344,7 @@ export default function Redirect({
         </Grid.Container>
       </React.Fragment>
     );
-  }, [countdown, data, disclaimer, timer, url]);
+  }, [countdown, data, disclaimer, handleCancel, timer, url]);
 
   return (
     <Container className="flex flex-col items-center justify-center w-90 my-[50px]">

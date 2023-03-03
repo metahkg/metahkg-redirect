@@ -1,6 +1,10 @@
 import dns from "dns";
 import isLocalhost from "is-localhost-ip";
 
+/**
+ * @description Check if the hostname is forbidden (local or private)
+ * @param {string} hostname - The hostname to check.
+ */
 export async function isForbiddenHost(
   hostname: string
 ): Promise<boolean | null> {
