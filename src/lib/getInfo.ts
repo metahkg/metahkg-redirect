@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { safebrowsing, safebrowsing_v4 } from "@googleapis/safebrowsing";
-import { mkdirSync, readFileSync, writeFileSync } from "fs";
+import { mkdirSync } from "fs";
 import { parsecsv } from "./parsecsv";
 import { regex } from "./regex";
 import { TidyURL } from "tidy-url";
