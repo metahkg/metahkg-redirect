@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<{
     return { props: { data: { statusCode: 429, error: "Too many requests" } } };
   }
 
-  const url = decodeURIComponent(String(context.query.url));
+  const url = String(context.query.url);
 
   const data = await getInfo(url);
 
