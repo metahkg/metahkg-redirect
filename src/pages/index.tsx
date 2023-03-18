@@ -114,7 +114,7 @@ export default function Redirect({
   }, [countdown, timer, cancel]);
 
   if (timer === 0 && countdown) {
-    window.location.assign(data?.redirectUrl || url);
+    window.location.assign(data?.tidyUrl || data?.redirectUrl || url);
   }
 
   /**
