@@ -53,6 +53,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const url = String(context.query.url);
+  const forceLanding = String(context.query.forceLanding) === "true";
 
   const data = await getInfo(url);
 
@@ -61,7 +62,8 @@ export const getServerSideProps: GetServerSideProps<{
     !data.unsafe &&
     data.reachable &&
     !data.redirects &&
-    !data.tracking
+    !data.tracking &&
+    !forceLanding
   ) {
     return {
       redirect: {
