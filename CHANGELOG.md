@@ -1,3 +1,35 @@
+#### 6.7.0 (2023-04-24)
+
+##### Chores
+
+*  set version v6.7.0 (f091ccd2)
+*  update CHANGELOG.md (87a868c9)
+*  add turbo config (fa55dbbc)
+*  v6.4.1 (359f7aa7)
+*  add docstrings (d19f0e80)
+*  add docstrings (a8c74b49)
+*  use property shorthand (b10a4d2a)
+*  use template string (8a583691)
+
+##### Continuous Integration
+
+*  fix tagging (b495e2c3)
+
+##### New Features
+
+*  force landing (ce684600)
+
+##### Bug Fixes
+
+* **countdown:**  tidy url (9be8d121)
+* **url:**  already decoded by default, no need to decode again (f900fd36)
+*  use useCallback (252d1ce4)
+*  remove @ts-ignore (11aa285b)
+*  remove arrow functions in jsx (8bd44be6)
+*  add title and description (102051cb)
+* **regex:**  remove unnecessary escapes (00311b4c)
+* **getInfo:**  function not executed (651db056)
+
 #### 6.4.1 (2023-04-24)
 
 ##### Chores
