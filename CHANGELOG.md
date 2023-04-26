@@ -1,3 +1,40 @@
+#### 6.9.0 (2023-04-26)
+
+##### Chores
+
+*  set version v6.9.0 (5eced6d0)
+*  set version v6.7.0 (f091ccd2)
+*  update CHANGELOG.md (87a868c9)
+*  add turbo config (fa55dbbc)
+*  v6.4.1 (359f7aa7)
+*  add docstrings (d19f0e80)
+*  add docstrings (a8c74b49)
+*  use property shorthand (b10a4d2a)
+*  use template string (8a583691)
+
+##### Continuous Integration
+
+*  fix tagging (b495e2c3)
+
+##### New Features
+
+*  support hmac verification (f334b34d)
+*  force landing (ce684600)
+
+##### Bug Fixes
+
+* **countdown:**  tidy url (9be8d121)
+* **url:**  already decoded by default, no need to decode again (f900fd36)
+*  use useCallback (252d1ce4)
+*  remove @ts-ignore (11aa285b)
+*  remove arrow functions in jsx (8bd44be6)
+* **regex:**  remove unnecessary escapes (00311b4c)
+* **getInfo:**  function not executed (651db056)
+
+##### Other Changes
+
+* //gitlab.com/metahkg/metahkg-redirect into dev (1d168c83)
+
 #### 6.4.1 (2023-04-24)
 
 ##### Chores
