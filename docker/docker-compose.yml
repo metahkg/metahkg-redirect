@@ -18,6 +18,8 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       env: ${env}
+      HMAC_KEY: ${HMAC_KEY}
+      HMAC_VERIFY: ${HMAC_VERIFY}
     mem_limit: 500mb
     memswap_limit: 500mb
     ports:

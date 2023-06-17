@@ -42,3 +42,4 @@ yarn-error.log*
 /docker/data/
 /docker/redis_data/
 /docker/mongo_data/
+.turbo
