@@ -12,11 +12,7 @@ export async function isForbiddenHost(
     const ips: string[] = await new Promise((resolve, reject) =>
       dns.resolve(hostname, (err, ips) => (err ? reject(err) : resolve(ips)))
     );
-    if (
-      (await Promise.all(ips.map(async (ip) => await isLocalhost(ip)))).some(
-        Boolean
-      )
-    ) {
+    if ((await Promise.all(ips.map((ip) => isLocalhost(ip)))).some(Boolean)) {
       return true;
     }
     return false;
