@@ -56,7 +56,11 @@ export const getServerSideProps: GetServerSideProps<{
   const url = String(context.query.url);
   const signature = String(context.query.signature);
 
-  if (config.HMAC_VERIFY && config.HMAC_KEY && !HMACVerify(url, signature)) {
+  if (
+    config.HMAC_VERIFY &&
+    config.HMAC_KEY &&
+    !HMACVerify(config.HMAC_KEY, url, signature)
+  ) {
     context.res.statusCode = 403;
     return {
       props: {
