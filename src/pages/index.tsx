@@ -223,7 +223,7 @@ export default function Redirect({
                           ? "Google safebrowsing"
                           : "Urlhaus"
                       } identified this URL as a threat`
-                    : `Host seems to be malicious`}
+                    : "Host seems to be malicious"}
                 </Text>
               }
               color="warning"
