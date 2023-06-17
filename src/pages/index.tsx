@@ -20,6 +20,7 @@ import { config } from "../lib/config";
 import { rateLimit } from "../lib/rateLimit";
 import { useDarkMode } from "../components/AppContext";
 import { useIsSmallScreen } from "../hooks/useWindowSize";
+import { HMACVerify } from "../lib/hmac";
 
 /**
  * @description get server side props
@@ -53,6 +54,26 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const url = String(context.query.url);
+  const signature = String(context.query.signature);
+
+  if (
+    config.HMAC_VERIFY &&
+    config.HMAC_KEY &&
+    !HMACVerify(config.HMAC_KEY, url, signature)
+  ) {
+    context.res.statusCode = 403;
+    return {
+      props: {
+        data: {
+          statusCode: 403,
+          error: "Access denied",
+          message: "HMAC signature invalid.",
+        },
+      },
+    };
+  }
+
+  const forceLanding = String(context.query.forceLanding) === "true";
 
   const data = await getInfo(url);
 
@@ -61,7 +82,8 @@ export const getServerSideProps: GetServerSideProps<{
     !data.unsafe &&
     data.reachable &&
     !data.redirects &&
-    !data.tracking
+    !data.tracking &&
+    !forceLanding
   ) {
     return {
       redirect: {
@@ -201,7 +223,7 @@ export default function Redirect({
                           ? "Google safebrowsing"
                           : "Urlhaus"
                       } identified this URL as a threat`
-                    : `Host seems to be malicious`}
+                    : "Host seems to be malicious"}
                 </Text>
               }
               color="warning"

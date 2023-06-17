@@ -16,8 +16,8 @@ export function genCheckUrlList(url: string): string[] {
   return [
     url_object && url.replace(`${url_object?.protocol}//`, ""),
     url.startsWith("https://")
-      ? url.replace(`https://`, "http://")
-      : url.replace(`http://`, "https://"),
+      ? url.replace("https://", "http://")
+      : url.replace("http://", "https://"),
     noQuery !== url && noQuery,
     url_object?.origin,
     url,
