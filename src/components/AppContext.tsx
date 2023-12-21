@@ -5,7 +5,7 @@ interface AppContextInterface {
 }
 
 const AppContext = createContext<AppContextInterface>(
-  {} as AppContextInterface
+  {} as AppContextInterface,
 );
 
 /**
@@ -18,7 +18,7 @@ export default function AppContextProvider(props: {
   const [darkMode, setDarkMode] = useState(
     typeof window !== "undefined"
       ? JSON.parse(localStorage?.getItem("darkmode") || "null") ?? true
-      : true
+      : true,
   );
 
   useEffect(() => {

@@ -9,7 +9,7 @@ export async function rateLimit(
   ip: string,
   /** in seconds */
   timeout = 30,
-  max?: number
+  max?: number,
 ): Promise<number> {
   const hashedIp = sha256(ip);
   const redisKey = `rate-limit-${hashedIp}`;
