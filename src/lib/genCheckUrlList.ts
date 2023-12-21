@@ -1,3 +1,7 @@
+/**
+ * @description Generate a list of urls to check
+ * @param {string} url - Url to check
+ */
 export function genCheckUrlList(url: string): string[] {
   let url_object: URL | null;
 
@@ -12,8 +16,8 @@ export function genCheckUrlList(url: string): string[] {
   return [
     url_object && url.replace(`${url_object?.protocol}//`, ""),
     url.startsWith("https://")
-      ? url.replace(`https://`, "http://")
-      : url.replace(`http://`, "https://"),
+      ? url.replace("https://", "http://")
+      : url.replace("http://", "https://"),
     noQuery !== url && noQuery,
     url_object?.origin,
     url,

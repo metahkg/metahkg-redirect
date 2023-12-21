@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { safebrowsing, safebrowsing_v4 } from "@googleapis/safebrowsing";
-import { mkdirSync, readFileSync, writeFileSync } from "fs";
+import { mkdirSync } from "fs";
 import { parsecsv } from "./parsecsv";
 import { regex } from "./regex";
 import { TidyURL } from "tidy-url";
@@ -15,6 +15,9 @@ import { ObjectId } from "mongodb";
 
 let downloaded = false;
 
+/**
+ * @description download malware threats data from urlhaus.abuse.ch
+ */
 async function downloadData() {
   await client.connect();
 
@@ -87,7 +90,7 @@ async function downloadData() {
   downloaded = true;
 }
 
-async () => {
+(async () => {
   try {
     await client.connect();
     if (
@@ -102,7 +105,7 @@ async () => {
   } finally {
     await client.close();
   }
-};
+})();
 
 downloadData();
 setInterval(
@@ -129,6 +132,10 @@ export type InfoData =
       error: string;
     };
 
+/**
+ * @description get info for url - threats, redirects, tracking, reachability
+ * @param {string} url - url to check
+ */
 export default async function getInfo(url: string): Promise<InfoData> {
   if (!regex.url.test(url)) {
     return { statusCode: 400, error: "Invalid URL" };
@@ -235,8 +242,8 @@ export default async function getInfo(url: string): Promise<InfoData> {
     console.error(e);
   }
 
-  let malicious: boolean = false;
-  let maliciousHost: string = "";
+  let malicious = false;
+  let maliciousHost = "";
   try {
     maliciousHost = (
       (await malwareHostsCl.findOne({
@@ -268,8 +275,8 @@ export default async function getInfo(url: string): Promise<InfoData> {
     ...(redirects !== null && { redirects }),
     tracking,
     ...(tracking && { tidyUrl }),
-    safebrowsingThreats: safebrowsingThreats,
-    urlhausThreats: urlhausThreats,
+    safebrowsingThreats,
+    urlhausThreats,
   };
 
   redis

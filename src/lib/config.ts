@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { getHMACKey } from "./hmac";
 
 dotenv.config();
 
@@ -9,4 +10,6 @@ export const config = {
   REDIS_PORT: Number(process.env.REDIS_PORT || 6379) || 6379,
   REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
   TRUST_PROXY: JSON.parse(process.env.TRUST_PROXY || "true") ?? true,
+  HMAC_KEY: getHMACKey(),
+  HMAC_VERIFY: JSON.parse(process.env.HMAC_VERIFY || "false") ?? false,
 };

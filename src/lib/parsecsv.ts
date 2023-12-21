@@ -1,5 +1,8 @@
 import papa from "papaparse";
 
+/**
+ * @description parse csv to array of objects
+ */
 export function parsecsv(
   csv: string,
   columns: string[] = [],
