@@ -34,6 +34,7 @@ async function downloadData() {
       "dateadded",
       "url",
       "url_status",
+      "last_online",
       "threat",
       "tags",
       "urlhaus_link",
