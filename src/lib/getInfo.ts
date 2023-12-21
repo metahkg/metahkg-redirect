@@ -32,7 +32,7 @@ async function downloadData() {
       .then((res) => res.text())
       .catch(() => null);
 
-    const columns = [
+    let columns = [
       "id",
       "dateadded",
       "url",
@@ -43,6 +43,16 @@ async function downloadData() {
       "urlhaus_link",
       "reporter",
     ];
+
+    if (malware_urls_csv) {
+      const lines = malware_urls_csv.trim().split("\n");
+      for (let index = 0; index < 50; index++) {
+        if (!lines[index].trim().startsWith("#")) {
+          columns = lines[index - 1].replace("#", "").trim().split(",");
+          return;
+        }
+      }
+    }
 
     const malware_urls = malware_urls_csv
       ? (parsecsv(malware_urls_csv, columns, {
