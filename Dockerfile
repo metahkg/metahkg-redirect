@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:20-alpine as build
 
 ARG env
 ENV env $env
@@ -17,7 +17,7 @@ RUN if [ "$env" = "dev" ]; then mkdir .next; \
     rm -rf .next/cache && \
     yarn install --production --frozen-lockfile --network-timeout 1000000; fi;
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 

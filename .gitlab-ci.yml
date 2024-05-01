@@ -17,7 +17,7 @@ stages:
 
 lint:
   stage: lint
-  image: node:18
+  image: node:20
   before_script:
     - git checkout $CI_COMMIT_BRANCH
     - git config user.name metahkg-bot
@@ -67,7 +67,7 @@ docker-build:
         - Dockerfile
 
 tagging:
-  image: node:18-alpine
+  image: node:20-alpine
   stage: deploy
   allow_failure: true
   before_script:

@@ -1,3 +1,4 @@
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -155,4 +156,8 @@ a {
   --tw-backdrop-opacity: ;
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
+}
+
+* {
+    font-family: "Segoe UI", Tahoma, sans-serif;
 }
