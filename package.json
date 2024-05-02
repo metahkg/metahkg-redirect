@@ -4,9 +4,9 @@
   "author": "wcyat <wcyat@wcyat.me>",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --hostname 0.0.0.0",
     "lint": "next lint && prettier --write src",
     "test": "tsc --noEmit",
     "prepare": "husky install",
