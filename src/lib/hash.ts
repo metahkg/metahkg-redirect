@@ -5,7 +5,7 @@ import hash from "hash.js";
  * @param {string} str - string to hash
  */
 export function sha1(str: string) {
-  return hash.sha1().update(str).digest("hex");
+    return hash.sha1().update(str).digest("hex");
 }
 
 /**
@@ -13,7 +13,7 @@ export function sha1(str: string) {
  * @param {string} str - string to hash
  */
 export function sha256(str: string) {
-  return hash.sha256().update(str).digest("hex");
+    return hash.sha256().update(str).digest("hex");
 }
 
 /**
@@ -21,5 +21,5 @@ export function sha256(str: string) {
  * @param {string} str - string to hash
  */
 export function sha512(str: string) {
-  return hash.sha512().update(str).digest("hex");
+    return hash.sha512().update(str).digest("hex");
 }
