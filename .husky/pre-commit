@@ -14,7 +14,6 @@ fi;
 # lint
 if [ "$lintFileList" != "" ];
 then
-yarn eslint --fix $lintFileList || echo "WARNING: eslint failed to run";
 yarn prettier --write $lintFileList || echo "WARNING: prettier failed to run";
 git add $lintFileList;
 fi;
