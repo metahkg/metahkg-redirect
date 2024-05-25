@@ -1,43 +1,38 @@
 import React from "react";
-import Document, {
+import {
     DocumentContext,
-    DocumentInitialProps,
-    Head,
     Html,
+    Head,
     Main,
     NextScript,
+    DocumentProps,
 } from "next/document";
+import {
+    DocumentHeadTags,
+    documentGetInitialProps,
+    DocumentHeadTagsProps,
+} from "@mui/material-nextjs/v14-pagesRouter";
 
 /**
  * @description Custom Next.js document
  */
-class MyDocument extends Document {
-    /**
-     * @description get initial props
-     */
-    static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
-        const initialProps = await Document.getInitialProps(ctx);
+const MyDocument = (props: DocumentProps & DocumentHeadTagsProps) => {
+    return (
+        <Html lang="en">
+            <Head>
+                <DocumentHeadTags {...props} />
+            </Head>
+            <body>
+                <Main />
+                <NextScript />
+            </body>
+        </Html>
+    );
+};
 
-        return initialProps;
-    }
-
-    /**
-     * @description Renders the document
-     */
-    render() {
-        return (
-            <Html lang="en">
-                <Head>
-                    <title>Metahkg Redirect</title>
-                    <meta name="description" content="Metahkg Redirect" />
-                </Head>
-                <body>
-                    <Main />
-                    <NextScript />
-                </body>
-            </Html>
-        );
-    }
-}
+MyDocument.getInitialProps = async (ctx: DocumentContext) => {
+    const finalProps = await documentGetInitialProps(ctx);
+    return finalProps;
+};
 
 export default MyDocument;

@@ -16,11 +16,6 @@ It detects:
 
 If none of above are detected, the app returns a 302 redirect.
 
-## Styles
-
-- [NextUI](https://nextui.org/)
-- [tailwindcss](https://tailwindcss.com)
-
 ## Sources
 
 Metahkg Redirect determines whether a url is a threat using data from two sources:
