@@ -47,6 +47,7 @@ async function downloadData() {
             for (let index = 0; index < 50; index++) {
                 if (!lines[index].trim().startsWith("#")) {
                     columns = lines[index - 1].replace("#", "").trim().split(",");
+                    break;
                 }
             }
         }
