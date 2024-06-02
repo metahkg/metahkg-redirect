@@ -1,3 +1,59 @@
+#### 6.14.0 (2024-06-02)
+
+##### Chores
+
+*  set version 6.14.0 (5ad2ba4a)
+*  prettify (585b7813)
+*  update license terms (6cbb1224)
+*  set version v6.9.0 (5eced6d0)
+*  set version v6.7.0 (f091ccd2)
+*  update CHANGELOG.md (87a868c9)
+
+##### Continuous Integration
+
+*  update .deepsource.toml (15ac093b)
+*  fix tagging (b495e2c3)
+
+##### New Features
+
+*  support hmac verification (f334b34d)
+*  force landing (ce684600)
+*  switch to use mongodb (eb5b8e9b)
+*  forbid private / local ip addresses (70914a9d)
+
+##### Bug Fixes
+
+* **getInfo:**
+  *  columns of malware urls (a87ae127)
+  *  urlhaus csv format (c92ffce4)
+*  remove lint (667587a2)
+*  add 0.0.0.0 as host (090107d7)
+*  is forbidden host (9a14175a)
+*  remove private-ip (069ab10e)
+*  add margin to cancel icon (ca0294fb)
+* **threat:**  type (5d9079bb)
+* **hmac:**  use hmac.digest once only (the HMAC object is destroyed after one call) (e62ec4ba)
+* **code:**
+  *  JS-R1004 Useless template literal found (b5d2d257)
+  *  JS-0343 Detected throwing literals as exceptions (5bdedb7e)
+  *  JS-0379 Prefer consistent returning of awaited values (20590911)
+  *  JS-E1008 Found cyclic imports (6f5837a5)
+* **countdown:**  tidy url (9be8d121)
+
+##### Other Changes
+
+* //gitlab.com/metahkg/metahkg-redirect into dev (1ed6940f)
+*  bump dependencies (9f12661d)
+* //gitlab.com/metahkg/metahkg-redirect into dev (ace029d2)
+* //gitlab.com/metahkg/metahkg-redirect into dev (cb1c7d91)
+*  parse columns from csv (364513dd)
+*  remove sharp (8f250de6)
+* //gitlab.com/metahkg/metahkg-redirect into dev (0a98a18e)
+* //github.com/metahkg/metahkg-redirect into dev (fe1fb154)
+* //gitlab.com/metahkg/metahkg-redirect into dev (49f60fbf)
+*  CHANGELOG.md (c3d1b448)
+* //gitlab.com/metahkg/metahkg-redirect into dev (1d168c83)
+
 #### 6.9.0 (2023-04-26)
 
 ##### Chores
