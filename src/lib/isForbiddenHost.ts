@@ -6,11 +6,11 @@ import isLocalhost from "is-localhost-ip";
  * @param {string} hostname - The hostname to check.
  */
 export async function isForbiddenHost(
-  hostname: string
+  hostname: string,
 ): Promise<boolean | null> {
   try {
     const ips: string[] = await new Promise((resolve, reject) =>
-      dns.resolve(hostname, (err, ips) => (err ? reject(err) : resolve(ips)))
+      dns.resolve(hostname, (err, ips) => (err ? reject(err) : resolve(ips))),
     );
     if ((await Promise.all(ips.map((ip) => isLocalhost(ip)))).some(Boolean)) {
       return true;

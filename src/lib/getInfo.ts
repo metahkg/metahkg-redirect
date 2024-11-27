@@ -27,7 +27,7 @@ async function downloadData() {
     const malware_urls_csv = await fetch(
       // online malware urls
       // see https://urlhaus.abuse.ch/api/
-      "https://urlhaus.abuse.ch/downloads/csv_online/"
+      "https://urlhaus.abuse.ch/downloads/csv_online/",
     )
       .then((res) => res.text())
       .catch(() => null);
@@ -64,7 +64,7 @@ async function downloadData() {
     const malware_hosts_txt = await fetch(
       // malware hosts
       // https://gitlab.com/malware-filter/urlhaus-filter
-      "https://malware-filter.gitlab.io/malware-filter/urlhaus-filter-domains.txt"
+      "https://malware-filter.gitlab.io/malware-filter/urlhaus-filter-domains.txt",
     )
       .then((res) => res.text())
       .catch(() => null);
@@ -121,7 +121,7 @@ downloadData();
 setInterval(
   downloadData,
   // 30 minutes
-  1000 * 60 * 30
+  1000 * 60 * 30,
 );
 
 export type InfoData =
@@ -259,7 +259,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
       (await malwareHostsCl.findOne({
         host: {
           $in: ([redirects && actualUrl, url].filter(Boolean) as string[]).map(
-            (url) => new URL(url).host
+            (url) => new URL(url).host,
           ),
         },
       })) as { _id?: ObjectId; host: string }
@@ -276,7 +276,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
 
   const result = {
     unsafe: Boolean(
-      safebrowsingThreats.length + urlhausThreats.length + Number(malicious)
+      safebrowsingThreats.length + urlhausThreats.length + Number(malicious),
     ),
     malicious,
     ...(maliciousHost && { maliciousHost }),
@@ -295,7 +295,7 @@ export default async function getInfo(url: string): Promise<InfoData> {
       JSON.stringify(result),
       "EX",
       // ttl: 30 minutes
-      60 * 30
+      60 * 30,
     )
     .catch(console.error);
 

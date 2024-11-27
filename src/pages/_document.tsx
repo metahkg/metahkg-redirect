@@ -17,7 +17,7 @@ class MyDocument extends Document {
    * @description get initial props
    */
   static async getInitialProps(
-    ctx: DocumentContext
+    ctx: DocumentContext,
   ): Promise<DocumentInitialProps> {
     const initialProps = await Document.getInitialProps(ctx);
 

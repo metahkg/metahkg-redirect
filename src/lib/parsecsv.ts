@@ -10,7 +10,7 @@ export function parsecsv(
     comments?: string;
     quoteChar?: string;
     delimiter?: string;
-  }
+  },
 ) {
   const parse_options = Object.assign(
     {
@@ -18,7 +18,7 @@ export function parsecsv(
       quoteChar: '"',
       delimiter: ",",
     },
-    options
+    options,
   ) as {
     comments: string;
     quoteChar: string;
